@@ -7,6 +7,9 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+const WS_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL
+
 export default function Forum() {
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState({})
@@ -19,14 +22,14 @@ export default function Forum() {
   // ---------------------------------
   useEffect(() => {
     const loadData = async () => {
-      const qRes = await fetch("process.env.NEXT_PUBLIC_API_URL/questions")
+      const qRes = await fetch(`${API_URL}/questions`)
       const qData = await qRes.json()
       setQuestions(qData)
 
       const allAnswers = {}
       await Promise.all(
         qData.map(async q => {
-          const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${q.id}`)
+          const res = await fetch(`${API_URL}/answers/${q.id}`)
           allAnswers[q.id] = await res.json()
         })
       )

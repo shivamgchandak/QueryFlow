@@ -26,14 +26,14 @@ export default function Dashboard() {
     if (!token) return
 
     const load = async () => {
-      const qRes = await fetch("process.env.NEXT_PUBLIC_API_URL/questions")
+      const qRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions`)
       const qData = await qRes.json()
       setQuestions(qData)
 
       const allAnswers = {}
       await Promise.all(
         qData.map(async q => {
-          const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${q.id}`)
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/answers/${q.id}`)
           allAnswers[q.id] = await res.json()
         })
       )
@@ -42,7 +42,7 @@ export default function Dashboard() {
 
     load()
 
-    const ws = new WebSocket("process.env.NEXT_PUBLIC_API_URL/ws/questions")
+    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`)
     ws.onmessage = e => setQuestions(JSON.parse(e.data))
 
     return () => ws.close()
@@ -51,7 +51,7 @@ export default function Dashboard() {
   // 🔁 Update Status
   const updateStatus = async (id, status) => {
     const res = await fetch(
-      `process.env.NEXT_PUBLIC_API_URL/questions/${id}/status?status=${status}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/questions/${id}/status?status=${status}`,
       {
         method: "PUT",
         headers: {

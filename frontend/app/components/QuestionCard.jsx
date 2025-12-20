@@ -13,7 +13,7 @@ export default function QuestionCard({ question }) {
     }
 
     await fetch(
-      `process.env.NEXT_PUBLIC_API_URL/questions/${question.id}/answer`,
+      `${process.env.NEXT_PUBLIC_API_URL}/questions/${question.id}/answer`,
       {
         method: "PUT",
         headers: {
