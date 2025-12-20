@@ -38,7 +38,7 @@ export default function Forum() {
 
     loadData()
 
-    const ws = new WebSocket("process.env.NEXT_PUBLIC_WEBSOCKET_URL/ws/questions")
+    const ws = new WebSocket(`${WS_URL}`)
     ws.onmessage = e => setQuestions(JSON.parse(e.data))
     return () => ws.close()
   }, [])
@@ -52,7 +52,7 @@ export default function Forum() {
       return
     }
 
-    await fetch("process.env.NEXT_PUBLIC_API_URL/questions", {
+    await fetch(`${API_URL}/questions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
@@ -71,7 +71,7 @@ export default function Forum() {
       return
     }
 
-    await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${id}`, {
+    await fetch(`${API_URL}/answers/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: answerText[id] })
@@ -79,7 +79,7 @@ export default function Forum() {
 
     setAnswerText(prev => ({ ...prev, [id]: "" }))
 
-    const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${id}`)
+    const res = await fetch(`${API_URL}S/answers/${id}`)
     const data = await res.json()
     setAnswers(prev => ({ ...prev, [id]: data }))
 
