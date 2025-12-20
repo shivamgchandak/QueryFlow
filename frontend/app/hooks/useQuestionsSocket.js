@@ -6,7 +6,7 @@ export function useQuestionsSocket() {
   const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/questions");
+    const ws = new WebSocket("process.env.NEXT_PUBLIC_API_URL/ws/questions");
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);

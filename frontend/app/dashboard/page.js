@@ -42,7 +42,7 @@ export default function Dashboard() {
 
     load()
 
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/questions")
+    const ws = new WebSocket("process.env.NEXT_PUBLIC_API_URL/ws/questions")
     ws.onmessage = e => setQuestions(JSON.parse(e.data))
 
     return () => ws.close()
