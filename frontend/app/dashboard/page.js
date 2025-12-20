@@ -26,14 +26,14 @@ export default function Dashboard() {
     if (!token) return
 
     const load = async () => {
-      const qRes = await fetch("http://127.0.0.1:8000/questions")
+      const qRes = await fetch("process.env.NEXT_PUBLIC_API_URL/questions")
       const qData = await qRes.json()
       setQuestions(qData)
 
       const allAnswers = {}
       await Promise.all(
         qData.map(async q => {
-          const res = await fetch(`http://127.0.0.1:8000/answers/${q.id}`)
+          const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${q.id}`)
           allAnswers[q.id] = await res.json()
         })
       )
@@ -51,7 +51,7 @@ export default function Dashboard() {
   // 🔁 Update Status
   const updateStatus = async (id, status) => {
     const res = await fetch(
-      `http://127.0.0.1:8000/questions/${id}/status?status=${status}`,
+      `process.env.NEXT_PUBLIC_API_URL/questions/${id}/status?status=${status}`,
       {
         method: "PUT",
         headers: {

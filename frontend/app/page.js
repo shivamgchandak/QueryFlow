@@ -19,14 +19,14 @@ export default function Forum() {
   // ---------------------------------
   useEffect(() => {
     const loadData = async () => {
-      const qRes = await fetch("http://127.0.0.1:8000/questions")
+      const qRes = await fetch("process.env.NEXT_PUBLIC_API_URL/questions")
       const qData = await qRes.json()
       setQuestions(qData)
 
       const allAnswers = {}
       await Promise.all(
         qData.map(async q => {
-          const res = await fetch(`http://127.0.0.1:8000/answers/${q.id}`)
+          const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${q.id}`)
           allAnswers[q.id] = await res.json()
         })
       )
@@ -49,7 +49,7 @@ export default function Forum() {
       return
     }
 
-    await fetch("http://127.0.0.1:8000/questions", {
+    await fetch("process.env.NEXT_PUBLIC_API_URL/questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
@@ -68,7 +68,7 @@ export default function Forum() {
       return
     }
 
-    await fetch(`http://127.0.0.1:8000/answers/${id}`, {
+    await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: answerText[id] })
@@ -76,7 +76,7 @@ export default function Forum() {
 
     setAnswerText(prev => ({ ...prev, [id]: "" }))
 
-    const res = await fetch(`http://127.0.0.1:8000/answers/${id}`)
+    const res = await fetch(`process.env.NEXT_PUBLIC_API_URL/answers/${id}`)
     const data = await res.json()
     setAnswers(prev => ({ ...prev, [id]: data }))
 
