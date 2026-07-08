@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { Inbox, Search } from "lucide-react"
-import { formatRelativeTime } from "@/lib/utils"
+import { formatRelativeTime, getWebSocketUrl } from "@/lib/utils"
 
 const STATUS_FILTERS = ["All", "Pending", "Escalated", "Answered"]
 
@@ -79,7 +79,7 @@ export default function Dashboard() {
 
     load()
 
-    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`)
+    const ws = new WebSocket(getWebSocketUrl(process.env.NEXT_PUBLIC_API_URL))
     ws.onmessage = e => setQuestions(JSON.parse(e.data))
 
     return () => ws.close()
