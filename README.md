@@ -6,9 +6,8 @@ A real-time Q&A dashboard where users (guests) can submit and answer questions, 
 
 ## 🔗 Live Links
 
-- **Frontend:** https://hemut-qna-by-shivam.vercel.app/
-- **Backend (API Docs):** https://hemut-qna-backend.onrender.com/docs
-- **GitHub Repository:** https://github.com/shivamgchandak/Hemut-QnA
+- **Frontend:** https://queryflow-by-shivam.vercel.app/
+- **GitHub Repository:** https://github.com/shivamgchandak/QueryFlow
 
 ---
 
@@ -34,6 +33,7 @@ Admin accounts are provisioned separately and are not published here. Contact th
 
 - **Frontend:** Next.js, Tailwind CSS, shadcn/ui
 - **Backend:** FastAPI, SQLAlchemy
+- **Database:** PostgreSQL (hosted on Neon)
 - **Realtime:** WebSockets
 - **Deployment:**  
   - Frontend: Vercel  
@@ -45,7 +45,8 @@ Admin accounts are provisioned separately and are not published here. Contact th
 
 - Backend deployed on **Render**
 - Frontend deployed on **Vercel**
-- Environment variables used for API and WebSocket URLs
+- Database hosted on **Neon** (PostgreSQL)
+- Environment variables used for API URL and database connection
 
 ---
 
