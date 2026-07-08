@@ -9,10 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { MessageSquare, Search, SendHorizontal } from "lucide-react"
-import { formatRelativeTime } from "@/lib/utils"
+import { formatRelativeTime, getWebSocketUrl } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
-const WS_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL
 
 const STATUS_FILTERS = ["All", "Pending", "Escalated", "Answered"]
 
@@ -69,7 +68,7 @@ export default function Forum() {
 
     loadData()
 
-    const ws = new WebSocket(`${WS_URL}`)
+    const ws = new WebSocket(getWebSocketUrl(API_URL))
     ws.onmessage = e => setQuestions(JSON.parse(e.data))
     return () => ws.close()
   }, [])
@@ -91,11 +90,23 @@ export default function Forum() {
 
     try {
       setSubmitting(true)
-      await fetch(`${API_URL}/questions`, {
+      const res = await fetch(`${API_URL}/questions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message })
       })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        toast.error(err.detail || "Failed to submit question")
+        return
+      }
+
+      // Don't rely solely on the WebSocket broadcast to reflect the new
+      // question (it may be disconnected/misconfigured) — refetch directly.
+      const qRes = await fetch(`${API_URL}/questions`)
+      setQuestions(await qRes.json())
+
       setMessage("")
       toast.success("Question submitted")
     } catch {
@@ -112,16 +123,22 @@ export default function Forum() {
     }
 
     try {
-      await fetch(`${API_URL}/answers/${id}`, {
+      const res = await fetch(`${API_URL}/answers/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: answerText[id] })
       })
 
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        toast.error(err.detail || "Failed to submit answer")
+        return
+      }
+
       setAnswerText(prev => ({ ...prev, [id]: "" }))
 
-      const res = await fetch(`${API_URL}/answers/${id}`)
-      const data = await res.json()
+      const answersRes = await fetch(`${API_URL}/answers/${id}`)
+      const data = await answersRes.json()
       setAnswers(prev => ({ ...prev, [id]: data }))
       setOpen(prev => ({ ...prev, [id]: true }))
 
