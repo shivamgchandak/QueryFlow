@@ -9,7 +9,7 @@ from .websocket import manager
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Hemut QnA Dashboard API",
+    title="QueryFlow API",
     version="1.0.0",
     description="Real-time Q&A system with admin moderation"
 )

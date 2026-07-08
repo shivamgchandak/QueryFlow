@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import case, desc
-from jose import jwt
 
 from ..database import SessionLocal
 from ..models import Question, Answer
 from ..schemas import QuestionCreate
 from ..websocket import manager
-from ..auth import SECRET_KEY, ALGORITHM
+from ..auth import get_current_admin
 
 router = APIRouter(prefix="/questions", tags=["Questions"])
 
@@ -92,24 +91,9 @@ def get_questions(db: Session = Depends(get_db)):
 async def update_status(
     question_id: int,
     status: str,
-    authorization: str = Header(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
 ):
-    # -------------------------
-    # Auth
-    # -------------------------
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Missing token")
-
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    if payload.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-
     # -------------------------
     # Validate Question
     # -------------------------

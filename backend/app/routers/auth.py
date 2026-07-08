@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from ..database import SessionLocal
 from ..models import User
 from ..schemas import UserCreate, UserLogin
-from ..auth import hash_password, verify_password, create_access_token
+from ..auth import hash_password, verify_password, create_access_token, get_current_admin
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -19,10 +19,29 @@ def get_db():
 
 
 # -------------------------
+# Registration guard
+# Registering the very first admin (empty users table) is open so a
+# fresh clone can bootstrap itself. Once any admin exists, creating
+# another one requires a valid admin token.
+# -------------------------
+def require_admin_or_bootstrap(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    if db.query(User).count() == 0:
+        return None
+    return get_current_admin(authorization)
+
+
+# -------------------------
 # Register Admin
 # -------------------------
 @router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
+def register(
+    user: UserCreate,
+    db: Session = Depends(get_db),
+    _: dict = Depends(require_admin_or_bootstrap)
+):
     new_user = User(
         username=user.username,
         email=user.email,
