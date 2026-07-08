@@ -1,4 +1,5 @@
 import hashlib
+from fastapi import Header, HTTPException
 from jose import jwt
 from datetime import datetime, timedelta
 
@@ -20,3 +21,19 @@ def create_access_token(data: dict):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def get_current_admin(authorization: str = Header(None)):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing token")
+
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return payload

@@ -1,4 +1,4 @@
-# Hemut Q&A Dashboard
+# QueryFlow
 
 A real-time Q&A dashboard where users (guests) can submit and answer questions, and admins can manage question statuses with live updates.
 
@@ -26,10 +26,7 @@ A real-time Q&A dashboard where users (guests) can submit and answer questions, 
 
 ## 🔐 Admin Login
 
-Use the following credentials to access the admin dashboard:
-
-- **Email:** `admin1@gmail.com`
-- **Password:** `admin@1`
+Admin accounts are provisioned separately and are not published here. Contact the project maintainer for access, or create an admin user directly via the backend.
 
 ---
 
